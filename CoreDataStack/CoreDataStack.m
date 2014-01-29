@@ -40,7 +40,7 @@ static NSMutableDictionary *stacks = nil;
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
 }
 
 - (instancetype)initWithStoreName:(NSString *)storeName
@@ -68,7 +68,7 @@ static NSMutableDictionary *stacks = nil;
 
 - (NSManagedObjectContext *)rootManagedObjectContext
 {
-	if (_rootManagedObjectContext == nil)
+    if (_rootManagedObjectContext == nil)
     {
 		_rootManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         _rootManagedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
@@ -78,31 +78,31 @@ static NSMutableDictionary *stacks = nil;
 
 - (NSManagedObjectContext *)managedObjectContext
 {
-	if (_managedObjectContext == nil)
+    if (_managedObjectContext == nil)
     {
-		_managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:self.concurrencyType];
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:self.concurrencyType];
         if (_managedObjectContext.concurrencyType == NSMainQueueConcurrencyType) {
             _managedObjectContext.parentContext = self.rootManagedObjectContext;
         } else {
             _managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
         }
-	}
+    }
     return _managedObjectContext;
 }
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-	if (_managedObjectModel == nil)
+    if (_managedObjectModel == nil)
     {
         if (self.modelName) {
             _managedObjectModel = [NSManagedObjectModel managedObjectModelNamed:self.modelName inBundle:self.modelBundle];
         }
-        
+
         if (!_managedObjectModel) {
             _managedObjectModel = [NSManagedObjectModel mergedManagedObjectModelFromBundle:self.modelBundle];
         }
     }
-	return _managedObjectModel;
+    return _managedObjectModel;
 }
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
