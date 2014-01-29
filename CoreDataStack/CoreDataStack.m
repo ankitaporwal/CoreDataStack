@@ -70,7 +70,7 @@ static NSMutableDictionary *stacks = nil;
 {
     if (_rootManagedObjectContext == nil)
     {
-		_rootManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        _rootManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         _rootManagedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
 	}
     return _rootManagedObjectContext;

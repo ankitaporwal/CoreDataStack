@@ -102,29 +102,29 @@ typedef void(^NSManagedObjectContextCompletionBlock)(BOOL success, NSError *erro
 
 - (void)observeContextOnMainThread:(NSManagedObjectContext *)context
 {
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeChangesOnMainThread:) name:NSManagedObjectContextDidSaveNotification object:context];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeChangesOnMainThread:) name:NSManagedObjectContextDidSaveNotification object:context];
 }
 
 - (void)stopObservingContext:(NSManagedObjectContext *)context
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:context];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:context];
 }
 
 - (void)mergeChanges:(NSNotification *)notification;
 {
-	[self mergeChangesFromContextDidSaveNotification:notification];
+    [self mergeChangesFromContextDidSaveNotification:notification];
 }
 
 - (void)mergeChangesOnMainThread:(NSNotification *)notification;
 {
-	if ([NSThread isMainThread])
-	{
-		[self mergeChanges:notification];
-	}
-	else
-	{
-		[self performSelectorOnMainThread:@selector(mergeChanges:) withObject:notification waitUntilDone:YES];
-	}
+    if ([NSThread isMainThread])
+    {
+        [self mergeChanges:notification];
+    }
+    else
+    {
+        [self performSelectorOnMainThread:@selector(mergeChanges:) withObject:notification waitUntilDone:YES];
+    }
 }
 
 @end
