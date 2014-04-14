@@ -13,8 +13,6 @@
 #import "NSManagedObjectModel+Stack.h"
 #import "NSPersistentStoreCoordinator+Stack.h"
 
-#import "NSManagedObject+Composite.h"
-#import "NSManagedObject+NSFetchRequest.h"
 #import "NSManagedObject+Resource.h"
 #import "NSManagedObject+Stack.h"
 

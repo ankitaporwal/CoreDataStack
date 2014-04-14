@@ -7,45 +7,102 @@
 //
 
 #import "NSManagedObject+Resource.h"
-#import "NSManagedObjectContext+Stack.h"
-#import "NSManagedObject+NSFetchRequest.h"
 #import "NSManagedObject+Stack.h"
+#import "NSManagedObjectContext+Stack.h"
+#import "NSPredicate+Helpers.h"
+#import "NSSortDescriptor+Helpers.h"
+
+@interface __NSFetchRequestBuilder : NSObject <NSFetchRequestBuilder>
+
+@end
+
+@implementation __NSFetchRequestBuilder
+
+@synthesize entityName = _entityName;
+@synthesize managedObjectContext = _managedObjectContext;
+@synthesize fetchBatchSize = _fetchBatchSize;
+@synthesize fetchLimit = _fetchLimit;
+@synthesize fetchOffset = _fetchOffset;
+@synthesize predicate = _predicate;
+@synthesize resultType = _resultType;
+@synthesize sortDescriptors = _sortDescriptors;
+
+- (void)where:(NSDictionary *)where
+{
+    self.predicate = [NSPredicate predicateFromDictionary:where];
+}
+
+- (void)sortBy:(NSDictionary *)sort
+{
+    self.sortDescriptors = [NSSortDescriptor sortDescriptorsFromDictionary:sort];
+}
+
+- (NSArray *)objects
+{
+    return [self.managedObjectContext executeFetchRequest:[self request] error:NULL];
+}
+
+- (NSUInteger)count
+{
+    return [self.managedObjectContext countForFetchRequest:[self request] error:NULL];
+}
+
+- (NSManagedObject *)create
+{
+    return [NSEntityDescription insertNewObjectForEntityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
+}
+
+- (NSFetchRequest *)request
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
+    request.fetchBatchSize = self.fetchBatchSize;
+    request.fetchLimit = self.fetchLimit;
+    request.fetchOffset = self.fetchOffset;
+    request.predicate = self.predicate;
+    request.resultType = self.resultType;
+    request.sortDescriptors = self.sortDescriptors;
+    return request;
+}
+
+@end
 
 @implementation NSManagedObject (Resource)
 
-+ (NSArray *)all
++ (NSArray *)all:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    return [self allInContext:[self managedObjectContext]];
+    return [[self builder:block] objects];
 }
 
-+ (NSArray *)allInContext:(NSManagedObjectContext *)context
++ (NSInteger)count:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    return [self executeFetchRequest:[self requestInContext:context] inContext:context];
+    return [[self builder:block] count];
 }
 
-+ (id)first
++ (NSFetchRequest *)request:(void (^)(id <NSFetchRequestBuilder> builder))block
 {
-    return [self firstInContext:[self managedObjectContext]];
+    return [[self builder:block] request];
 }
 
-+ (id)firstInContext:(NSManagedObjectContext *)context
++ (instancetype)find:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    return [self executeFetchRequestAndReturnFirstObject:[self requestInContext:context]];
+    __NSFetchRequestBuilder *builder = [self builder:block];
+    builder.fetchLimit = 1;
+    return [[builder objects] firstObject];
 }
 
-+ (NSUInteger)count
++ (instancetype)findOrCreate:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    return [self countInContext:[self managedObjectContext]];
+    id object = [self find:block];
+    if (!object) {
+        object = [self create:block];
+    }
+    return object;
 }
 
-+ (NSUInteger)countInContext:(NSManagedObjectContext *)context
++ (instancetype)create:(void (^)(id <NSFetchRequestBuilder> builder))block
 {
-    return [self countFetchRequest:[self requestInContext:context] inContext:context];
-}
-
-+ (instancetype)create
-{
-    return [self createInContext:[self managedObjectContext]];
+    return [[self builder:block] create];
 }
 
 + (instancetype)createInContext:(NSManagedObjectContext *)context
@@ -53,43 +110,15 @@
     return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
 }
 
-+ (instancetype)create:(NSDictionary *)attributes
++ (void)delete:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    return [self create:attributes inContext:[self managedObjectContext]];
-}
-
-+ (instancetype)create:(NSDictionary *)attributes inContext:(NSManagedObjectContext *)context
-{
-    NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
-    [object update:attributes];
-    return object;
-}
-
-+ (void)deleteAll
-{
-    [self deleteAllInContext:[self managedObjectContext]];
-}
-
-+ (void)deleteAllInContext:(NSManagedObjectContext *)context
-{
-    [[self allInContext:context] makeObjectsPerformSelector:@selector(delete)];
-}
-
-- (void)update:(NSDictionary *)data
-{
-    if (data && ![data isEqual:[NSNull null]])
-        return;
-    
-    NSDictionary *attributes = [[self entity] attributesByName];
-    for (NSString *key in attributes)
+    NSArray *objects = [self all:block];
+    [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
     {
-        id value = data[key];
-        if (value == nil || [value isEqual:[NSNull null]]) {
-            continue;
+        if ([obj isKindOfClass:[NSManagedObject class]]) {
+            [obj delete];
         }
-        
-        [self setSafeValue:value forKey:key];
-    }
+    }];
 }
 
 - (void)delete
@@ -97,7 +126,6 @@
     if (self.managedObjectContext == nil) {
         return;
     }
-    
     [self.managedObjectContext deleteObject:self];
 }
 
@@ -113,44 +141,16 @@
 
 #pragma mark - Private
 
-- (void)setSafeValue:(id)value forKey:(id)key
++ (__NSFetchRequestBuilder *)builder:(void (^)(id<NSFetchRequestBuilder> builder))block
 {
-    if (value == nil || value == [NSNull null]) {
-        return;
+    __NSFetchRequestBuilder *builder = [[__NSFetchRequestBuilder alloc] init];
+    if (block) {
+        block(builder);
     }
     
-    NSDictionary *attributes = [[self entity] attributesByName];
-    NSAttributeType attributeType = [[attributes objectForKey:key] attributeType];
-    
-    if ((attributeType == NSStringAttributeType) && ([value isKindOfClass:[NSNumber class]]))
-        value = [value stringValue];
-    
-    else if ([value isKindOfClass:[NSString class]])
-    {
-        if ([self isIntegerAttributeType:attributeType])
-            value = [NSNumber numberWithInteger:[value integerValue]];
-        else if (attributeType == NSFloatAttributeType)
-            value = [NSNumber numberWithDouble:[value doubleValue]];
-        else if (attributeType == NSDateAttributeType)
-            value = [self.defaultFormatter dateFromString:value];
-    }
-    [self setValue:value forKey:key];
-}
-
-- (BOOL)isIntegerAttributeType:(NSAttributeType)attributeType
-{
-    return (attributeType == NSInteger16AttributeType) || (attributeType == NSInteger32AttributeType) || (attributeType == NSInteger64AttributeType) || (attributeType == NSBooleanAttributeType);
-}
-
-- (NSDateFormatter *)defaultFormatter
-{
-    static NSDateFormatter *sharedFormatter;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        sharedFormatter = [[NSDateFormatter alloc] init];
-        sharedFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss z";
-    });
-    return sharedFormatter;
+    builder.entityName = builder.entityName ?: NSStringFromClass([self class]);
+    builder.managedObjectContext = builder.managedObjectContext ?: [self managedObjectContext];
+    return builder;
 }
 
 @end

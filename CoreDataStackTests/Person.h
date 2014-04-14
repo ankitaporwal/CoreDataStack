@@ -14,4 +14,7 @@
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSNumber *age;
 
++ (instancetype)findWithID:(NSNumber *)personID;
++ (instancetype)findOrCreateWithID:(NSNumber *)personID;
+
 @end
