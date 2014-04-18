@@ -14,6 +14,7 @@
 
 @property (nonatomic, readonly) NSManagedObjectContext *rootManagedObjectContext;
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, readonly) NSManagedObjectContext *backgroundObjectContext;
 @property (nonatomic, assign)   NSManagedObjectContextConcurrencyType concurrencyType;
 
 @property (nonatomic, readonly) NSManagedObjectModel *managedObjectModel;

@@ -7,39 +7,29 @@
 //
 
 #import <CoreData/CoreData.h>
-
-@protocol NSFetchRequestBuilder <NSObject>
-
-@required
-
-@property (nonatomic, strong) NSString                *entityName;
-@property (nonatomic, strong) NSManagedObjectContext  *managedObjectContext;
-@property (nonatomic, assign) NSUInteger               fetchBatchSize;
-@property (nonatomic, assign) NSUInteger               fetchLimit;
-@property (nonatomic, assign) NSUInteger               fetchOffset;
-@property (nonatomic, strong) NSPredicate             *predicate;
-@property (nonatomic, assign) NSFetchRequestResultType resultType;
-@property (nonatomic, strong) NSArray                 *sortDescriptors;
-
-- (void)where:(NSDictionary *)where;
-- (void)sortBy:(NSDictionary *)sort;
-
-@end
-
+#import "NSManagedObjectCollection.h"
 
 @interface NSManagedObject (Resource)
 
-+ (NSArray *)all:(void (^)(id <NSFetchRequestBuilder> builder))block;
-+ (NSInteger)count:(void (^)(id <NSFetchRequestBuilder> builder))block;
-+ (NSFetchRequest *)request:(void (^)(id <NSFetchRequestBuilder> builder))block;
++ (id <NSManagedObjectCollection>)all;
++ (id <NSManagedObjectCollection>)allInContext:(NSManagedObjectContext *)context;
 
-+ (instancetype)find:(void (^)(id <NSFetchRequestBuilder> builder))block;
-+ (instancetype)findOrCreate:(void (^)(id <NSFetchRequestBuilder> builder))block;
-+ (instancetype)create:(void (^)(id <NSFetchRequestBuilder> builder))block;
++ (id <NSManagedObjectCollection>)findBy:(NSDictionary *)by;
++ (id <NSManagedObjectCollection>)findBy:(NSDictionary *)by inContext:(NSManagedObjectContext *)context;
 
-+ (void)delete:(void (^)(id <NSFetchRequestBuilder> builder))block;
++ (id <NSManagedObjectCollection>)findWhere:(NSString *)where;
++ (id <NSManagedObjectCollection>)findWhere:(NSString *)where inContext:(NSManagedObjectContext *)context;
+
++ (id <NSManagedObjectCollection>)findWithPredicate:(NSPredicate *)predicate;
++ (id <NSManagedObjectCollection>)findWithPredicate:(NSPredicate *)predicate inContext:(NSManagedObjectContext *)context;
+
++ (instancetype)create;
++ (instancetype)createInContext:(NSManagedObjectContext *)context;
+
++ (void)deleteAll;
++ (void)deleteAllInContext:(NSManagedObjectContext *)context;
+
 - (void)delete;
-
 - (void)save;
 - (void)saveOnCompletion:(void(^)(BOOL success, NSError *error))completion;
 

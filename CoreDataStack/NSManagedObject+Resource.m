@@ -10,99 +10,64 @@
 #import "NSManagedObject+Stack.h"
 #import "NSManagedObjectContext+Stack.h"
 #import "NSPredicate+Helpers.h"
-#import "NSSortDescriptor+Helpers.h"
-
-@interface __NSFetchRequestBuilder : NSObject <NSFetchRequestBuilder>
-
-@end
-
-@implementation __NSFetchRequestBuilder
-
-@synthesize entityName = _entityName;
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize fetchBatchSize = _fetchBatchSize;
-@synthesize fetchLimit = _fetchLimit;
-@synthesize fetchOffset = _fetchOffset;
-@synthesize predicate = _predicate;
-@synthesize resultType = _resultType;
-@synthesize sortDescriptors = _sortDescriptors;
-
-- (void)where:(NSDictionary *)where
-{
-    self.predicate = [NSPredicate predicateFromDictionary:where];
-}
-
-- (void)sortBy:(NSDictionary *)sort
-{
-    self.sortDescriptors = [NSSortDescriptor sortDescriptorsFromDictionary:sort];
-}
-
-- (NSArray *)objects
-{
-    return [self.managedObjectContext executeFetchRequest:[self request] error:NULL];
-}
-
-- (NSUInteger)count
-{
-    return [self.managedObjectContext countForFetchRequest:[self request] error:NULL];
-}
-
-- (NSManagedObject *)create
-{
-    return [NSEntityDescription insertNewObjectForEntityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
-}
-
-- (NSFetchRequest *)request
-{
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
-    request.fetchBatchSize = self.fetchBatchSize;
-    request.fetchLimit = self.fetchLimit;
-    request.fetchOffset = self.fetchOffset;
-    request.predicate = self.predicate;
-    request.resultType = self.resultType;
-    request.sortDescriptors = self.sortDescriptors;
-    return request;
-}
-
-@end
 
 @implementation NSManagedObject (Resource)
 
-+ (NSArray *)all:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)all
 {
-    return [[self builder:block] objects];
+   return [self collection];
 }
 
-+ (NSInteger)count:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)allInContext:(NSManagedObjectContext *)context
 {
-    return [[self builder:block] count];
+    return [self collectionWithContext:context];
 }
 
-+ (NSFetchRequest *)request:(void (^)(id <NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)findBy:(NSDictionary *)by
 {
-    return [[self builder:block] request];
+    NSManagedObjectCollection *collection = [self collection];
+    [collection.fetchRequest setPredicate:[NSPredicate predicateFromDictionary:by]];
+    return collection;
 }
 
-+ (instancetype)find:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)findBy:(NSDictionary *)by inContext:(NSManagedObjectContext *)context
 {
-    __NSFetchRequestBuilder *builder = [self builder:block];
-    builder.fetchLimit = 1;
-    return [[builder objects] firstObject];
+    NSManagedObjectCollection *collection = [self collectionWithContext:context];
+    [collection.fetchRequest setPredicate:[NSPredicate predicateFromDictionary:by]];
+    return collection;
 }
 
-+ (instancetype)findOrCreate:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)findWhere:(NSString *)where
 {
-    id object = [self find:block];
-    if (!object) {
-        object = [self create:block];
-    }
-    return object;
+    NSManagedObjectCollection *collection = [self collection];
+    [collection.fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
+    return collection;
 }
 
-+ (instancetype)create:(void (^)(id <NSFetchRequestBuilder> builder))block
++ (id <NSManagedObjectCollection>)findWhere:(NSString *)where inContext:(NSManagedObjectContext *)context
 {
-    return [[self builder:block] create];
+    NSManagedObjectCollection *collection = [self collectionWithContext:context];
+    [collection.fetchRequest setPredicate:[NSPredicate predicateWithFormat:where]];
+    return collection;
+}
+
++ (id <NSManagedObjectCollection>)findWithPredicate:(NSPredicate *)predicate
+{
+    NSManagedObjectCollection *collection = [self collection];
+    [collection.fetchRequest setPredicate:predicate];
+    return collection;
+}
+
++ (id <NSManagedObjectCollection>)findWithPredicate:(NSPredicate *)predicate inContext:(NSManagedObjectContext *)context
+{
+    NSManagedObjectCollection *collection = [self collectionWithContext:context];
+    [collection.fetchRequest setPredicate:predicate];
+    return collection;
+}
+
++ (instancetype)create
+{
+    return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:self.managedObjectContext];
 }
 
 + (instancetype)createInContext:(NSManagedObjectContext *)context
@@ -110,15 +75,14 @@
     return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
 }
 
-+ (void)delete:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (void)deleteAll
 {
-    NSArray *objects = [self all:block];
-    [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
-    {
-        if ([obj isKindOfClass:[NSManagedObject class]]) {
-            [obj delete];
-        }
-    }];
+    [[self all] delete];
+}
+
++ (void)deleteAllInContext:(NSManagedObjectContext *)context
+{
+    [[self allInContext:context] delete];
 }
 
 - (void)delete
@@ -141,16 +105,16 @@
 
 #pragma mark - Private
 
-+ (__NSFetchRequestBuilder *)builder:(void (^)(id<NSFetchRequestBuilder> builder))block
++ (NSManagedObjectCollection *)collection
 {
-    __NSFetchRequestBuilder *builder = [[__NSFetchRequestBuilder alloc] init];
-    if (block) {
-        block(builder);
-    }
-    
-    builder.entityName = builder.entityName ?: NSStringFromClass([self class]);
-    builder.managedObjectContext = builder.managedObjectContext ?: [self managedObjectContext];
-    return builder;
+    return [self collectionWithContext:self.managedObjectContext];
+}
+
++ (NSManagedObjectCollection *)collectionWithContext:(NSManagedObjectContext *)context
+{
+    NSManagedObjectCollection *collection = [[NSManagedObjectCollection alloc] initWithClass:self.class];
+    collection.managedObjectContext = context;
+    return collection;
 }
 
 @end

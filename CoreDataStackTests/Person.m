@@ -9,24 +9,39 @@
 #import "Person.h"
 #import "CoreData+Stack.h"
 
+static BOOL kAllowDeletion = NO;
+
 @implementation Person
 
 @dynamic personID;
 @dynamic name;
 @dynamic age;
 
-+ (instancetype)findWithID:(NSNumber *)personID
++ (void)setAllowsDeletion:(BOOL)allowsDeletion
 {
-    return [self find:^(id<NSFetchRequestBuilder> builder) {
-        [builder where:@{ @"personID" : personID }];
-    }];
+    kAllowDeletion = allowsDeletion;
 }
 
-+ (instancetype)findOrCreateWithID:(NSNumber *)personID
+#pragma mark - Importable
+
++ (BOOL)allowsDeletion
 {
-    return [self findOrCreate:^(id<NSFetchRequestBuilder> builder) {
-        [builder where:@{ @"personID" : personID }];
-    }];
+    return kAllowDeletion;
+}
+
++ (NSString *)identifierKey
+{
+    return @"personID";
+}
+
++ (id)identifierFromItem:(NSDictionary *)feedItem atIndex:(NSInteger)index
+{
+    return [feedItem objectForKey:@"id"];
+}
+
++ (void)updateEntity:(Person *)person withItem:(NSDictionary *)feedItem
+{
+    person.personID = [feedItem objectForKey:@"id"];
 }
 
 @end

@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NSManagedObject+Import.h"
 
-@interface Person : NSManagedObject
+@interface Person : NSManagedObject <NSImportable>
 
 @property (nonatomic, retain) NSNumber *personID;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSNumber *age;
 
-+ (instancetype)findWithID:(NSNumber *)personID;
-+ (instancetype)findOrCreateWithID:(NSNumber *)personID;
++ (void)setAllowsDeletion:(BOOL)allowsDeletion;
 
 @end

@@ -29,7 +29,7 @@ static NSPersistentStoreCoordinator *defaultCoordinator = nil;
     [coordinator addSQLiteStoreNamed:storeURL withOptions:options configuration:configuration];
     if ([[coordinator persistentStores] count] == 0)
     {
-        //[coordinator performSelector:@selector(MR_addAutoMigratingSqliteStoreNamed:) withObject:storeFileName afterDelay:0.5];
+
     }
     return coordinator;
 }
