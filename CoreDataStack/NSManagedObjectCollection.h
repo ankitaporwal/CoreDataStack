@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @protocol NSManagedObjectCollection <NSObject>
 
@@ -19,6 +20,10 @@
 @property (nonatomic, readonly) id object;
 @property (nonatomic, readonly) id firstObject;
 @property (nonatomic, readonly) id lastObject;
+
+- (NSFetchedResultsController *)fetchedResultsController;
+- (NSFetchedResultsController *)fetchedResultsControllerWithSectionNameKeyPath:(NSString *)sectionKeyPath;
+- (NSFetchedResultsController *)fetchedResultsControllerWithSectionNameKeyPath:(NSString *)sectionKeyPath cacheName:(NSString *)cacheName;
 
 - (NSArray *)take:(NSInteger)amount;
 - (NSArray *)takeInRange:(NSRange)range;

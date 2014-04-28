@@ -61,6 +61,22 @@
     return [[self objects] lastObject];
 }
 
+- (NSFetchedResultsController *)fetchedResultsController
+{
+    return [[NSFetchedResultsController alloc] initWithFetchRequest:self.fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+}
+
+- (NSFetchedResultsController *)fetchedResultsControllerWithSectionNameKeyPath:(NSString *)sectionKeyPath
+{
+    return [[NSFetchedResultsController alloc] initWithFetchRequest:self.fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:sectionKeyPath cacheName:nil];
+}
+
+- (NSFetchedResultsController *)fetchedResultsControllerWithSectionNameKeyPath:(NSString *)sectionKeyPath cacheName:(NSString *)cacheName
+{
+    return [[NSFetchedResultsController alloc] initWithFetchRequest:self.fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:sectionKeyPath cacheName:cacheName];
+
+}
+
 - (NSArray *)take:(NSInteger)amount
 {
     self.fetchRequest.fetchLimit = amount;
