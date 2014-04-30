@@ -22,26 +22,4 @@ static BOOL kAllowDeletion = NO;
     kAllowDeletion = allowsDeletion;
 }
 
-#pragma mark - Importable
-
-+ (BOOL)allowsDeletion
-{
-    return kAllowDeletion;
-}
-
-+ (NSString *)identifierKey
-{
-    return @"personID";
-}
-
-+ (id)identifierFromItem:(NSDictionary *)feedItem atIndex:(NSInteger)index
-{
-    return [feedItem objectForKey:@"id"];
-}
-
-+ (void)updateEntity:(Person *)person withItem:(NSDictionary *)feedItem
-{
-    person.personID = [feedItem objectForKey:@"id"];
-}
-
 @end

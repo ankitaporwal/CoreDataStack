@@ -27,8 +27,8 @@
 		DE5F6F2D1873C0C700EEF6EF /* Crap.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5F6F2C1873C0C700EEF6EF /* Crap.m */; };
 		DE5F6F4418755E7100EEF6EF /* NSManagedObject+Resource.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5F6F4318755E7100EEF6EF /* NSManagedObject+Resource.m */; };
 		DE65DB8118FFEC6D0008C400 /* NSManagedObjectCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = DE65DB8018FFEC6D0008C400 /* NSManagedObjectCollection.m */; };
-		DE65DB841900062E0008C400 /* NSManagedObject+Import.m in Sources */ = {isa = PBXBuildFile; fileRef = DE65DB831900062E0008C400 /* NSManagedObject+Import.m */; };
-		DE65DB88190008C70008C400 /* NSManagedObjectImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = DE65DB87190008C70008C400 /* NSManagedObjectImporter.m */; };
+		DE7233E21911004C00D33BA3 /* CDObjectImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7233E11911004C00D33BA3 /* CDObjectImporter.m */; };
+		DE7233E519111A4400D33BA3 /* PersonImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = DE7233E419111A4400D33BA3 /* PersonImporter.m */; };
 		DE72F9641872518D000B0BEE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE72F9631872518D000B0BEE /* UIKit.framework */; };
 		DE72F97318737E44000B0BEE /* CoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = DE72F96F18737E44000B0BEE /* CoreDataStack.m */; };
 /* End PBXBuildFile section */
@@ -89,10 +89,10 @@
 		DE5F6F4318755E7100EEF6EF /* NSManagedObject+Resource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+Resource.m"; sourceTree = "<group>"; };
 		DE65DB7F18FFEC6D0008C400 /* NSManagedObjectCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSManagedObjectCollection.h; sourceTree = "<group>"; };
 		DE65DB8018FFEC6D0008C400 /* NSManagedObjectCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSManagedObjectCollection.m; sourceTree = "<group>"; };
-		DE65DB821900062E0008C400 /* NSManagedObject+Import.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+Import.h"; sourceTree = "<group>"; };
-		DE65DB831900062E0008C400 /* NSManagedObject+Import.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+Import.m"; sourceTree = "<group>"; };
-		DE65DB86190008C70008C400 /* NSManagedObjectImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSManagedObjectImporter.h; sourceTree = "<group>"; };
-		DE65DB87190008C70008C400 /* NSManagedObjectImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSManagedObjectImporter.m; sourceTree = "<group>"; };
+		DE7233E01911004C00D33BA3 /* CDObjectImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDObjectImporter.h; sourceTree = "<group>"; };
+		DE7233E11911004C00D33BA3 /* CDObjectImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDObjectImporter.m; sourceTree = "<group>"; };
+		DE7233E319111A4400D33BA3 /* PersonImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonImporter.h; sourceTree = "<group>"; };
+		DE7233E419111A4400D33BA3 /* PersonImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonImporter.m; sourceTree = "<group>"; };
 		DE72F9631872518D000B0BEE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DE72F96E18737E44000B0BEE /* CoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataStack.h; sourceTree = "<group>"; };
 		DE72F96F18737E44000B0BEE /* CoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataStack.m; sourceTree = "<group>"; };
@@ -184,6 +184,8 @@
 				DE5F6F2C1873C0C700EEF6EF /* Crap.m */,
 				DE2131DB186F7C85009FAFB2 /* Person.h */,
 				DE2131DC186F7C85009FAFB2 /* Person.m */,
+				DE7233E319111A4400D33BA3 /* PersonImporter.h */,
+				DE7233E419111A4400D33BA3 /* PersonImporter.m */,
 				DE2131C2186F799A009FAFB2 /* CoreDataStackTests.m */,
 				DE2131BD186F799A009FAFB2 /* Supporting Files */,
 			);
@@ -202,8 +204,6 @@
 		DE2BD183186F929D00549BCF /* NSManagedObject */ = {
 			isa = PBXGroup;
 			children = (
-				DE65DB821900062E0008C400 /* NSManagedObject+Import.h */,
-				DE65DB831900062E0008C400 /* NSManagedObject+Import.m */,
 				DE5F6F4218755E7100EEF6EF /* NSManagedObject+Resource.h */,
 				DE5F6F4318755E7100EEF6EF /* NSManagedObject+Resource.m */,
 				DE2BD18D186F938500549BCF /* NSManagedObject+Stack.h */,
@@ -243,8 +243,8 @@
 		DE65DB851900089E0008C400 /* Import */ = {
 			isa = PBXGroup;
 			children = (
-				DE65DB86190008C70008C400 /* NSManagedObjectImporter.h */,
-				DE65DB87190008C70008C400 /* NSManagedObjectImporter.m */,
+				DE7233E01911004C00D33BA3 /* CDObjectImporter.h */,
+				DE7233E11911004C00D33BA3 /* CDObjectImporter.m */,
 			);
 			name = Import;
 			sourceTree = "<group>";
@@ -332,16 +332,15 @@
 			files = (
 				DE2BD19F187088C500549BCF /* NSPersistentStoreCoordinator+Stack.m in Sources */,
 				DE5F6F2A1873B82400EEF6EF /* NSError+Stack.m in Sources */,
-				DE65DB841900062E0008C400 /* NSManagedObject+Import.m in Sources */,
 				DE2BD1AB1871173100549BCF /* NSPredicate+Helpers.m in Sources */,
 				DE2BD1991870811A00549BCF /* NSManagedObjectContext+Stack.m in Sources */,
 				DE5F6F4418755E7100EEF6EF /* NSManagedObject+Resource.m in Sources */,
 				DE2BD18F186F938500549BCF /* NSManagedObject+Stack.m in Sources */,
+				DE7233E21911004C00D33BA3 /* CDObjectImporter.m in Sources */,
 				DE2BD19C1870828700549BCF /* NSManagedObjectModel+Stack.m in Sources */,
 				DE2BD1AE1871D1AE00549BCF /* NSSortDescriptor+Helpers.m in Sources */,
 				DE72F97318737E44000B0BEE /* CoreDataStack.m in Sources */,
 				DE65DB8118FFEC6D0008C400 /* NSManagedObjectCollection.m in Sources */,
-				DE65DB88190008C70008C400 /* NSManagedObjectImporter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +351,7 @@
 				DE2131DD186F7C85009FAFB2 /* Person.m in Sources */,
 				DE2131DA186F7C26009FAFB2 /* Person.xcdatamodeld in Sources */,
 				DE2131C3186F799A009FAFB2 /* CoreDataStackTests.m in Sources */,
+				DE7233E519111A4400D33BA3 /* PersonImporter.m in Sources */,
 				DE5F6F2D1873C0C700EEF6EF /* Crap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

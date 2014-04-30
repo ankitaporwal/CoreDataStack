@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSManagedObject+Import.h"
 
-@interface Person : NSManagedObject <NSImportable>
+@interface Person : NSManagedObject
 
 @property (nonatomic, retain) NSNumber *personID;
 @property (nonatomic, retain) NSString *name;

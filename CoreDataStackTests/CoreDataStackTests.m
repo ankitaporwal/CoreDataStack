@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "CoreData+Stack.h"
 #import "Person.h"
+#import "PersonImporter.h"
 #import "Crap.h"
 
 @interface CoreDataStackTests : XCTestCase
@@ -107,8 +108,14 @@
 //    };
 //    [self.importer importWithFeed:objects];
     
-    [Person importWithData:objects];
-
+    Person *person = [[Person findBy:@{ @"personID": @1 }] object];
+    
+    PersonImporter *importer = [[PersonImporter alloc] init];
+    importer.importedObjects = objects;
+    importer.allowsDeletion = YES;
+//    importer.managedObjects = @[ person ];
+    [importer import];
+    
     
     NSLog(@"COUNT A %@", [[[Person all] sortBy:@{ @"personID" : @YES}] objects]);
 }
@@ -121,8 +128,8 @@
     NSData *data = [json dataUsingEncoding:NSUTF8StringEncoding];
     NSArray *objects = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    [Person setAllowsDeletion:YES];
-    [Person importWithData:objects];
+//    [Person setAllowsDeletion:YES];
+//    [Person importWithData:objects];
     
     
 //    self.importer.identifier = @"personID";
