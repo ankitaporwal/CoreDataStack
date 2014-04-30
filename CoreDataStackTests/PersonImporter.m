@@ -33,7 +33,7 @@
 
 - (id)identifierForData:(NSDictionary *)data atIndex:(NSUInteger)index
 {
-    return @"id";
+    return [data objectForKey:@"id"];
 }
 
 - (void)updateObject:(Person *)person withData:(NSDictionary *)data
